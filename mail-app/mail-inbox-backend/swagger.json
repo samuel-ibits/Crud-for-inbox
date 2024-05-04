@@ -1,0 +1,339 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "version": "1.0.0",
+    "title": "Mail Inbox API",
+    "description": "API for managing mail inbox"
+  },
+  "host": "localhost:5000",
+  "basePath": "/",
+  "schemes": ["http"],
+  "paths": {
+    "/": {
+      "get": {
+        "summary": "Welcome message",
+        "description": "Returns a welcome message for the Mail Inbox API",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "schema": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "/api/users/{userId}": {
+      "get": {
+        "summary": "Get user details with message counts",
+        "description": "Retrieves user details along with the number of read, unread, and total messages for the specified user ID",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "The ID of the user"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "schema": {
+              "$ref": "#/definitions/UserWithMessages"
+            }
+          },
+          "404": {
+            "description": "User not found",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      }
+    },
+    "/api/messages": {
+      "get": {
+        "summary": "Get all messages",
+        "description": "Retrieves all messages in the system",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Message"
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      }
+    },
+    "/api/messages/{messageId}/send": {
+      "post": {
+        "summary": "Send a message",
+        "description": "Sends a message as part of a conversation",
+        "parameters": [
+          {
+            "name": "messageId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "The ID of the message"
+          },
+          {
+            "name": "message",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/MessageSend"
+            },
+            "description": "The message to be sent"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "schema": {
+              "$ref": "#/definitions/Message"
+            }
+          },
+          "404": {
+            "description": "Message not found",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      }
+    },
+    "/api/messages/{messageId}": {
+      "get": {
+        "summary": "Get a specific message",
+        "description": "Retrieves a specific message by its ID",
+        "parameters": [
+          {
+            "name": "messageId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "The ID of the message"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Message"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/receiver/{receiverId}": {
+      "get": {
+        "summary": "Get messages for a receiver",
+        "description": "Retrieves all messages for a specific receiver ID",
+        "parameters": [
+          {
+            "name": "receiverId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "The ID of the receiver"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Message"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/messages/{messageId}": {
+      "put": {
+        "summary": "Update message status",
+        "description": "Updates the read status of a message",
+        "parameters": [
+          {
+            "name": "messageId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "The ID of the message"
+          },
+          {
+            "name": "isRead",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "boolean"
+            },
+            "description": "The new read status of the message"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "schema": {
+              "$ref": "#/definitions/SuccessMessage"
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "User": {
+      "type": "object",
+      "properties": {
+        "_id": {
+          "type": "string",
+          "description": "The user's ID"
+        },
+        "name": {
+          "type": "string",
+          "description": "The user's name"
+        },
+        "email": {
+          "type": "string",
+          "description": "The user's email address"
+        }
+      }
+    },
+    "UserWithMessages": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/User"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "readMessages": {
+              "type": "number",
+              "description": "The number of read messages for the user"
+            },
+            "unreadMessages": {
+              "type": "number",
+              "description": "The number of unread messages for the user"
+            },
+            "totalMessages": {
+              "type": "number",
+              "description": "The total number of messages for the user"
+            }
+          }
+        }
+      ]
+    },
+    "Message": {
+      "type": "object",
+      "properties": {
+        "_id": {
+          "type": "string",
+          "description": "The message's ID"
+        },
+        "subject": {
+          "type": "string",
+          "description": "The subject of the message"
+        },
+        "sender": {
+          "type": "string",
+          "description": "The ID of the sender"
+        },
+        "receiverId": {
+          "type": "string",
+          "description": "The ID of the receiver"
+        },
+        "isRead": {
+          "type": "boolean",
+          "description": "Whether the message has been read or not"
+        },
+        "conversation": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/MessageConversation"
+          },
+          "description": "The conversation history of the message"
+        }
+      }
+    },
+    "MessageConversation": {
+      "type": "object",
+      "properties": {
+        "message": {
+          "type": "string",
+          "description": "The message content"
+        },
+        "sender": {
+          "type": "string",
+          "description": "The ID of the sender"
+        }
+      }
+    },
+    "MessageSend": {
+      "type": "object",
+      "properties": {
+        "message": {
+          "type": "string",
+          "description": "The message content"
+        },
+        "sender": {
+          "type": "string",
+          "description": "The ID of the sender"
+        }
+      }
+    },
+    "Error": {
+      "type": "object",
+      "properties": {
+        "error": {
+          "type": "string",
+          "description": "The error message"
+        }
+      }
+    },
+    "SuccessMessage": {
+      "type": "object",
+      "properties": {
+        "message": {
+          "type": "string",
+          "description": "The success message"
+        }
+      }
+    }
+  }
+}
