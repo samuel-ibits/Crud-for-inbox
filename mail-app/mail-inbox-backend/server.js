@@ -3,10 +3,14 @@ const { MongoClient, ObjectId } = require("mongodb");
 const cors = require("cors");
 const multer = require("multer");
 const swaggerDocs = require('./swagger');
+require('dotenv').config();
 
 const app = express();
 const port = 5000;
-const uri = "mongodb://localhost:27017";
+// const uri = "mongodb://localhost:27017";
+
+
+const uri = process.env.MONGODB_URI; // Access MongoDB connection string from environment variable
 
 async function main() {
   try {
@@ -15,10 +19,11 @@ async function main() {
       useUnifiedTopology: true,
     });
     await client.connect();
+    console.log('Connected to MongoDB Atlas');
 
-    const db = client.db("mail-inbox-db");
-    const usersCollection = db.collection("users");
-    const messagesCollection = db.collection("messages");
+    const db = client.db('mail-inbox-db');
+    const usersCollection = db.collection('users');
+    const messagesCollection = db.collection('messages');
 
     app.use(cors());
     const upload = multer();
