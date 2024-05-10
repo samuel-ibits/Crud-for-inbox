@@ -1,34 +1,34 @@
 import React, { useState, useEffect } from 'react';
-import { Box, Heading, Text, Flex, Link } from '@chakra-ui/react';
+import { Box, Heading, Text, Flex } from '@chakra-ui/react';
 import styled from 'styled-components';
 import axios from 'axios';
 import { Link as RouterLink } from 'react-router-dom'; 
 import { useParams } from 'react-router-dom';
 
-// StyledBox component to apply custom styles
 const StyledBox = styled(Box)`
   background-color: ${props => props.isRead ? '#FFFFFF' : '#F1F8FF'};
   padding: 1.5rem;
   border-left: ${props => props.isRead ? 'none' : '5px solid #1A73E8'};
   border-bottom: 1px solid #E0E0E0;
-  width: 600px;
+  width: 100%; /* Full width for mobile */
   text-align: left;
-  cursor: pointer; /* Add cursor pointer */
-  transition: background-color 0.3s; /* Add smooth background color transition */
+  cursor: pointer;
+  transition: background-color 0.3s;
   &:hover {
-    background-color: #E8F0FE; /* Change background color on hover */
+    background-color: #E8F0FE;
   }
 `;
-// StyledHeading component for subject
+
 const StyledHeading = styled(Heading)`
   color: #202124;
-  text-decoration: none; /* Remove text decoration */
+  text-decoration: none;
 `;
-// StyledText component for content
+
 const StyledText = styled(Text)`
   color: #5F6368;
-  text-decoration: none; /* Remove text decoration */
+  text-decoration: none;
 `;
+
 const CenteredBox = styled(Flex)`
   justify-content: center;
   align-items: center;
@@ -60,11 +60,10 @@ const InboxPage = () => {
   
       await axios.put(`https://crud-for-inbox.onrender.com/api/messages/${messageId}`, formData, {
         headers: {
-          'Content-Type': 'multipart/form-data', // Set content type to multipart/form-data
+          'Content-Type': 'multipart/form-data',
         },
       });
   
-      // Update the local state to reflect the change
       setMessages(prevMessages =>
         prevMessages.map(message => {
           if (message._id === messageId) {
@@ -81,7 +80,7 @@ const InboxPage = () => {
 
   return (
     <CenteredBox>
-      <Box>
+      <Box width={{ base: '90%', md: '70%', lg: '50%' }}> {/* Responsive width */}
         <Heading mb={6} textAlign="center">Inbox</Heading>
         {messages.map((message) => (
           <RouterLink key={message._id} to={`/message/${message._id}`} style={{ textDecoration: 'none' }}>
