@@ -21,7 +21,7 @@ async function main() {
     await client.connect();
     console.log('Connected to MongoDB Atlas');
 
-    const db = client.db('mail-inbox-db');
+    const db = client.db('test');
     const usersCollection = db.collection('users');
     const messagesCollection = db.collection('messages');
 
